@@ -42,5 +42,6 @@ features = [
     "bevy_animation",
     "bevy_audio",
     "bevy_asset",
+    "bevy_core_pipeline",
     #"android_shared_stdcxx", TODO: Android Support
 ]

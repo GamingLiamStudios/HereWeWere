@@ -4,7 +4,7 @@ Description under construction.
 
 ## What is this?
 
-This is the complete source-code of my in-development game `Here We Were`, a JRPG-like Mystery Adventure game with a completely dynamic storyline.
+This is the complete source of my in-development game `Here We Were`, a JRPG-like Mystery Adventure game with a completely dynamic storyline.
 
 ## How do I play this?
 

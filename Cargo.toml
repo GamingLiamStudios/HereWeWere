@@ -2,6 +2,7 @@
 name = "here_we_are"
 version = "0.1.0"
 edition = "2021"
+license = "LGPL-2.1-only"
 
 [profile.dev]
 opt-level = 1
@@ -12,9 +13,34 @@ lto = "thin"
 [profile.dev.package."*"]
 opt-level = 3
 
-# Win - Setup Dev Env: 
-# cargo install -f cargo-binutils
-# rustup component add llvm-tools-preview
+[features]
+default = ["bevy/dynamic_linking"]
 
 [dependencies]
-bevy = { version = "0.11.0", features = ["dynamic_linking"] }
+
+[dependencies.bevy]
+version = "0.11"
+default-features = false
+features = [
+    #"async-io", DAMN YOU MAIN DOCS
+    "wayland",
+    "x11",
+    "zstd",
+    #"webgl2",
+    "serialize",
+    "png",
+    "hdr",
+    "multi-threaded",
+    "symphonia-flac",
+
+    "bevy_winit",
+    "bevy_ui",
+    "bevy_render",
+    "bevy_sprite",
+    "bevy_text",
+    "bevy_gilrs",
+    "bevy_animation",
+    "bevy_audio",
+    "bevy_asset",
+    #"android_shared_stdcxx", TODO: Android Support
+]

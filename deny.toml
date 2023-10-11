@@ -1,0 +1,77 @@
+# Note that all fields that take a lint level have these possible values:
+# * deny - An error will be produced and the check will fail
+# * warn - A warning will be produced, but the check will not fail
+# * allow - No warning or error will be produced, though in some cases a note will be
+
+# Metadata collection from Features
+all-features = true
+no-default-features = false
+#features = []
+feature-depth = 1
+
+[advisories]
+db-path = "~/.cargo/advisory-db"
+db-urls = ["https://github.com/rustsec/advisory-db"]
+
+vulnerability = "deny"
+unmaintained = "warn"
+yanked = "warn"
+notice = "warn"
+
+# A list of advisory IDs to ignore.
+ignore = []
+
+[licenses]
+unlicensed = "warn" # So we can add a [[licenses.clarify]] or [[licenses.exceptions]]
+# Uncomment/Add as needed
+allow = [
+    # Public Domain
+    "CC0-1.0",
+    "Unlicense",
+    #"WTFPL",
+    "Zlib",
+    
+    # Permissive
+    "MIT",
+    "MIT-0",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-3-Clause",
+    "BSD-2-Clause",
+    "0BSD",
+    "ISC",
+    "Unicode-DFS-2016",
+    #"BSL-1.0",
+    "MPL-2.0",
+
+    # Copyleft
+    "LGPL-2.1",
+    #"LGPL-3.0",
+    #"GPL-2.0",
+    #"GPL-3.0",
+]
+deny = []
+
+copyleft = "warn"
+allow-osi-fsf-free = "neither"
+default = "warn"
+confidence-threshold = 0.93
+exceptions = []
+
+[bans]
+multiple-versions = "allow"
+wildcards = "allow"
+highlight = "all"
+workspace-default-features = "allow"
+external-default-features = "allow"
+
+allow = []
+deny = []
+skip = []
+skip-tree = []
+
+[sources]
+unknown-registry = "warn"
+unknown-git = "warn"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []

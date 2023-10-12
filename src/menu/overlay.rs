@@ -1,15 +1,22 @@
 use bevy::prelude::*;
 
-/// Marker component for the overlay UI - This is used to destroy the UI when we
-/// leave the UI state
+use super::UiState;
+
+/// Marker component for the overlay UI
 #[derive(Component)]
 pub struct Marker;
 
 /// Create the overlay UI
 pub fn create(
 	mut commands: Commands,
+	state: Res<State<UiState>>,
 	asset_server: Res<AssetServer>,
 ) {
+	// Check to prevent spawning the UI when it shouldn't - Probably redundant
+	if *state.get() != UiState::Overlay {
+		return;
+	}
+
 	// Will render above everything else
 	commands
 		.spawn((

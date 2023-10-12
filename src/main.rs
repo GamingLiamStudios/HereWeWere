@@ -23,16 +23,17 @@ use menu::{
 
 // TODO: Remove. Replace with UiState + GameState
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
-enum AppState {
+enum GameState {
 	#[default]
-	Menu,
-	InWorld,
+	Paused,
+	Interaction,
+	Exploration,
 }
 
 fn main() {
 	let mut app = App::new();
 
-	app.add_state::<AppState>(); // Global state - Are we in the Menu or Playing the Game?
+	app.add_state::<GameState>(); // Global state - Are we in the Menu or Playing the Game?
 	app.add_state::<menu::UiState>(); // UI State - What Menu pane are we in?
 
 	#[allow(clippy::needless_update)] // stfu clippy i know what i'm doing
@@ -64,12 +65,12 @@ fn main() {
 	// Overlay
 	app.add_systems(
 		OnEnter(UiState::Overlay),
-		menu::overlay::create.run_if(in_state(AppState::InWorld)),
+		menu::overlay::create.after(in_state(GameState::Paused)),
 	); // Only render Overlay if we're in the Game
 	app.add_systems(
 		Update,
 		menu::overlay::update
-			.run_if(in_state(AppState::InWorld).and_then(in_state(UiState::Overlay))),
+			.run_if(in_state(GameState::Paused).and_then(in_state(UiState::Overlay))),
 	); // Tick the Overlay if it's rendered
 	app.add_systems(OnExit(UiState::Overlay), menu::destroy_ui::<OverlayMarker>);
 
@@ -81,8 +82,8 @@ fn startup(mut commands: Commands) {
 }
 
 fn update(
-	mut commands: Commands,
-	mut next_app_state: ResMut<NextState<AppState>>,
+	mut _commands: Commands,
+	mut next_game_state: ResMut<NextState<GameState>>,
 	mut next_ui_state: ResMut<NextState<UiState>>,
 	mut key_event: EventReader<KeyboardInput>,
 	mut app_exit_events: ResMut<Events<bevy::app::AppExit>>,
@@ -94,20 +95,16 @@ fn update(
 	// If `Escape` is pressed, quit the game
 	for key in key_event.iter() {
 		match key.key_code {
-			Some(KeyCode::W) => {
-				if key.state == ButtonState::Pressed {
-					next_app_state.set(AppState::InWorld);
-				}
-			},
 			Some(KeyCode::O) => {
 				if key.state == ButtonState::Pressed {
 					next_ui_state.set(UiState::Overlay);
+					next_game_state.set(GameState::Paused);
 				}
 			},
 			Some(KeyCode::M) => {
 				if key.state == ButtonState::Pressed {
-					next_app_state.set(AppState::Menu);
 					next_ui_state.set(UiState::Main);
+					next_game_state.set(GameState::Exploration);
 				}
 			},
 			Some(KeyCode::Escape) => {

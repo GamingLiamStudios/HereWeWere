@@ -4,7 +4,7 @@ Description under construction.
 
 ## What is this?
 
-This is the complete source of my in-development game `Here We Were`, a JRPG-like Mystery Adventure game with a completely dynamic storyline.
+This is the complete source of my in-development game `Here We Were`, a Mystery Adventure Visual Novel with a completely dynamic storyline.
 
 ## How do I play this?
 
@@ -46,4 +46,4 @@ Note that this is entirely just something I thought of in the moment and is very
 
 ## How far along is the game?
 
-Not very. I have a lot of the Engine done, but the game itself is still in the very early stages of development. I don't have a lot planned out just yet, but I do have a lot of ideas that I am very excited to implement. Progress of what I do know is planned can be found in the [Projects](https://github.com/users/GamingLiamStudios/projects/1/views/1) tab.
+Not very. I have a lot of the Engine done, but the game itself is still in the very early stages of development. I don't have a lot planned out just yet, but I do have a lot of ideas that I am very excited to implement. Progress of what I do know is planned can be found in the [Projects](https://github.com/users/GamingLiamStudios/projects/1/views/2) tab.

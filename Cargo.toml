@@ -14,7 +14,8 @@ lto = "thin"
 opt-level = 3
 
 [features]
-default = ["bevy/dynamic_linking"]
+default = ["debug"]
+debug = ["bevy/dynamic_linking", "bevy/filesystem_watcher"]
 
 [dependencies]
 
@@ -25,13 +26,14 @@ features = [
     #"async-io", DAMN YOU MAIN DOCS
     "wayland",
     "x11",
-    "zstd",
+    #"zstd",
     #"webgl2",
     "serialize",
     "png",
     "hdr",
     "multi-threaded",
     "symphonia-flac",
+    #"subpixel_glyph_atlas",
 
     "bevy_winit",
     "bevy_ui",

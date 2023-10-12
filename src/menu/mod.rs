@@ -2,10 +2,8 @@ use std::marker::ConstParamTy;
 
 use bevy::prelude::*;
 
-use crate::AppState;
-
-mod overlay;
-pub use overlay::update as overlay;
+pub mod overlay;
+pub use overlay::Marker as OverlayMarker;
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States, ConstParamTy)]
 pub enum UiState {
@@ -17,13 +15,13 @@ pub enum UiState {
 	Overlay,
 }
 
-#[derive(Resource)]
-struct UiFont(Handle<Font>);
-
-/// Load commonly used resources for the UI
-pub fn startup(
+pub fn destroy_ui<T>(
 	mut commands: Commands,
-	asset_server: Res<AssetServer>,
-) {
-	commands.insert_resource(UiFont(asset_server.load("fonts/NotoSans-Light.ttf")));
+	mut query: Query<(Entity, &T), With<T>>,
+) where
+	T: Component,
+{
+	for (entity, _) in query.iter_mut() {
+		commands.entity(entity).despawn_recursive();
+	}
 }

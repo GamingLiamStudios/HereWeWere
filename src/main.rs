@@ -1,4 +1,4 @@
-#![windows_subsystem = "windows"]
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 #![allow(incomplete_features)] // stfu clippy
 #![feature(adt_const_params)]
 
@@ -6,10 +6,22 @@ mod menu;
 
 use bevy::{
 	asset::ChangeWatcher,
+	input::keyboard::KeyboardInput,
 	prelude::*,
+	render::{
+		settings::{
+			Backends,
+			WgpuSettings,
+		},
+		RenderPlugin,
+	},
 };
-use menu::UiState;
+use menu::{
+	OverlayMarker,
+	UiState,
+};
 
+// TODO: Remove. Replace with UiState + GameState
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 enum AppState {
 	#[default]
@@ -31,21 +43,79 @@ fn main() {
 		..Default::default()
 	};
 
-	app.add_plugins(DefaultPlugins.set(assets));
+	let render = RenderPlugin {
+		wgpu_settings: WgpuSettings {
+			backends: Some(Backends::METAL | Backends::VULKAN), // DX12 was causing issues
+			..Default::default()
+		},
+	};
+
+	app.add_plugins(
+		DefaultPlugins
+			.set(assets)
+			.set(render)
+			.set(ImagePlugin::default_nearest()),
+	);
 
 	// Menu systems
-	app.add_systems(Startup, (startup, menu::startup));
+	app.add_systems(Startup, startup);
+	app.add_systems(Update, update);
 
 	// Overlay
-
+	app.add_systems(
+		OnEnter(UiState::Overlay),
+		menu::overlay::create.run_if(in_state(AppState::InWorld)),
+	); // Only render Overlay if we're in the Game
 	app.add_systems(
 		Update,
-		menu::overlay.run_if(in_state(AppState::InWorld).and_then(in_state(UiState::Overlay))),
-	); // Run the overlay system only if we're also in the InWorld state
+		menu::overlay::update
+			.run_if(in_state(AppState::InWorld).and_then(in_state(UiState::Overlay))),
+	); // Tick the Overlay if it's rendered
+	app.add_systems(OnExit(UiState::Overlay), menu::destroy_ui::<OverlayMarker>);
 
 	app.run();
 }
 
 fn startup(mut commands: Commands) {
 	commands.spawn(Camera2dBundle::default());
+}
+
+fn update(
+	mut commands: Commands,
+	mut next_app_state: ResMut<NextState<AppState>>,
+	mut next_ui_state: ResMut<NextState<UiState>>,
+	mut key_event: EventReader<KeyboardInput>,
+	mut app_exit_events: ResMut<Events<bevy::app::AppExit>>,
+) {
+	use bevy::input::ButtonState;
+
+	// If `O` is pressed, change to InWorld+Overlay
+	// If `M` is pressed, change to Menu+Main
+	// If `Escape` is pressed, quit the game
+	for key in key_event.iter() {
+		match key.key_code {
+			Some(KeyCode::W) => {
+				if key.state == ButtonState::Pressed {
+					next_app_state.set(AppState::InWorld);
+				}
+			},
+			Some(KeyCode::O) => {
+				if key.state == ButtonState::Pressed {
+					next_ui_state.set(UiState::Overlay);
+				}
+			},
+			Some(KeyCode::M) => {
+				if key.state == ButtonState::Pressed {
+					next_app_state.set(AppState::Menu);
+					next_ui_state.set(UiState::Main);
+				}
+			},
+			Some(KeyCode::Escape) => {
+				if key.state == ButtonState::Pressed {
+					app_exit_events.send(bevy::app::AppExit);
+				}
+			},
+			_ => {},
+		}
+	}
 }
